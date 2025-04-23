@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
 
 @Slf4j
 public class SoundManager {
-    private final ExecutorService audioExecutor = Executors.newSingleThreadExecutor();
+    private final ExecutorService audioExecutor = Executors.newSingleThreadExecutor(4);
     private final Map<File, Clip> clipCache = new HashMap<>();
     private final CustomSoundsConfig config;
 
@@ -30,7 +30,8 @@ public class SoundManager {
             try {
                 Clip audioClip = getClip(soundFile);
                 if (audioClip.isRunning()) {
-                    audioClip.stop();
+                    log.debug("Sounds is already playing: {}", soundFile.getName());
+                    return;
                 }
                 audioClip.setFramePosition(0);
                 setVolume(audioClip, config.masterVolume());
